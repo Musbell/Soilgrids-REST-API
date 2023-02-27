@@ -1,0 +1,259 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Soilgrids REST API",
+    "description": "<p>REST API Supporting Soilgrids portal et al.</p>\n                 <strong>For soilgrids FAQ and information:<strong>\n                 <p><a href=\"https://www.isric.org/explore/soilgrids/faq-soilgrids\" target=\"_blank\">https://www.isric.org/explore/soilgrids/faq-soilgrids</a></p>\n                 <p><strong>Please check ISRIC's data policy, disclaimer and citation:</strong></p>\n                 <p><a href=\"https://isric.org/about/data-policy\" target=\"_blank\">https://isric.org/about/data-policy</a></p>                   \n                 ",
+    "version": "2.0",
+    "contact": {
+      "name": "For soilgrids FAQ and information",
+      "url": "https://www.isric.org/explore/soilgrids/faq-soilgrids"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://rest.isric.org"
+    }
+  ],
+  "paths": {
+    "/soilgrids/v2.0/classification/query": {
+      "get": {
+        "tags": ["Classification"],
+        "summary": "Queries the WRB layers to extract most probable class, and probably of other classes",
+        "description": "Queries the WRB MostProbable vrt layer and the specific WRB class layers to extract probablity values\n\n\n- **number_classes**: Number of probability classes to return",
+        "operationId": "query_layer_wrb_classification_query_get",
+        "parameters": [
+          {
+            "description": "Longitude coordinate between -180 and 180",
+            "required": true,
+            "schema": {
+              "title": "Lon coordinate",
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number",
+              "description": "Longitude coordinate between -180 and 180"
+            },
+            "name": "lon",
+            "in": "query"
+          },
+          {
+            "description": "Latitude coordinate between 90 and 90",
+            "required": true,
+            "schema": {
+              "title": "Lat coordinate",
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number",
+              "description": "Latitude coordinate between 90 and 90"
+            },
+            "name": "lat",
+            "in": "query"
+          },
+          {
+            "description": "Number of WRB probability classes that will be return, ordered from higher to lower percentage",
+            "required": false,
+            "schema": {
+              "title": "Number of WRB probablity classes ",
+              "type": "integer",
+              "description": "Number of WRB probability classes that will be return, ordered from higher to lower percentage",
+              "default": 5
+            },
+            "name": "number_classes",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generic JSON with WRB classes",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/soilgrids/v2.0/properties/layers": {
+      "get": {
+        "tags": ["Properties"],
+        "summary": "Gets the layer structure of soilgrids soil properties",
+        "description": "Returns the current avaialble layer structure based on property, available depth and values",
+        "operationId": "layers_properties_layers_get",
+        "responses": {
+          "200": {
+            "description": "Generic JSON with layer structure",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/soilgrids/v2.0/properties/query": {
+      "get": {
+        "tags": ["Properties"],
+        "summary": "Queries a single pixel for information",
+        "description": "Query a single pixel point on the soilgrids stack, returning a GeoJSON\n\n- **layer**: soilgrids layer name to be queried\n- **depth**: specific depth to be queried\n- **values**: statistical values\nOptional[List] = LayerQuery\n\n\nCheck the amazon rain forest: lon=-72 lat=-9",
+        "operationId": "query_layer_properties_properties_query_get",
+        "parameters": [
+          {
+            "description": "Longitude coordinate between -180 and 180",
+            "required": true,
+            "schema": {
+              "title": "Lon coordinate",
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number",
+              "description": "Longitude coordinate between -180 and 180"
+            },
+            "name": "lon",
+            "in": "query"
+          },
+          {
+            "description": "Latitude coordinate between 90 and 90",
+            "required": true,
+            "schema": {
+              "title": "Lat coordinate",
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number",
+              "description": "Latitude coordinate between 90 and 90"
+            },
+            "name": "lat",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Property",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "bdod",
+                "cec",
+                "cfvo",
+                "clay",
+                "nitrogen",
+                "ocd",
+                "ocs",
+                "phh2o",
+                "sand",
+                "silt",
+                "soc"
+              ]
+            },
+            "name": "property",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Depth",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "0-5cm",
+                "0-30cm",
+                "5-15cm",
+                "15-30cm",
+                "30-60cm",
+                "60-100cm",
+                "100-200cm"
+              ]
+            },
+            "name": "depth",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Value",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": ["Q0.05", "Q0.5", "Q0.95", "mean", "uncertainty"]
+            },
+            "name": "value",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generic GeoJSON object",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": ["loc", "msg", "type"],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
